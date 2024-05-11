@@ -1,0 +1,65 @@
+html{
+    height: 100%;
+}
+
+body{
+    margin: 0;
+    height: 100%;
+}
+
+.menubar {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    background-color: #da6a6a;
+    margin: 0;
+    top: 0;
+    height: 50px; 
+    padding: 0 20px; 
+}
+
+.sectionicon{
+    height: 90%;
+}
+
+.sectionicon img {
+    height: 100%; 
+    margin: 0;
+}
+
+.sectionfilter {
+    margin: 0;
+    display: flex; 
+    align-items: center;
+}
+
+.sectionfilter .arboles,
+.sectionfilter .parques {
+    margin: 0px; 
+}
+
+.sectionlogin {
+    margin: 0;
+}
+.sectionfilter{
+    height: 100%;
+}
+.navbutton{
+    height: 100%;
+}
+.navbutton :hover{
+    background-color: aqua;
+}
+
+.sidebar{
+    background-color: green;
+    left: 0;
+    width: 12%;
+    height: 100%;
+    text-align: center;
+}
+
+#map {
+    height: 400px;
+    width: 100%;
+}
