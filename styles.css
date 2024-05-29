@@ -36,6 +36,8 @@ body{
 .sectionfilter .arboles,
 .sectionfilter .parques {
     margin: 0px; 
+    padding-left: 200px;
+  	padding-right: 200px;
 }
 
 .sectionlogin {
@@ -58,8 +60,26 @@ body{
     height: 100%;
     text-align: center;
 }
+.mostvisited{
+	text-align: center;
+}
 
-#map {
-    height: 400px;
-    width: 100%;
+.mostvisited a {
+    display: block; 
+    text-decoration: none;
+    color: black;
+}
+
+.mostvisited a:hover{
+    color: #4863A0;
+}
+
+.container {
+    display: flex;
+    flex-grow: 1;
+    height: 100%
+}
+.mainContent {
+    flex-grow: 1;
+    padding: 20px;
 }
