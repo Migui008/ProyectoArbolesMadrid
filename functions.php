@@ -3,7 +3,7 @@ function getAllArboles()
 {
     require_once("bbddconnect.php");
 
-    $sql = "SELECT nombre FROM arboles";
+    $sql = "SELECT nombre FROM arboles;";
     $result = $conn->query($sql);
     $arboles = [];
     if ($result->rowCount() > 0) {
@@ -12,21 +12,48 @@ function getAllArboles()
         }
         $_SESSION['arbolesAllNames'] = $arboles;
     }
+  	$conn = null;
 }
+
 function getAllParques()
 {
-    require_once("bbddconnect.php");
+  	session_start();
+    echo "Incluyendo bbddconnect.php<br>"; // Depuración
+    require_once('bbddconnect.php');
+
+    if ($conn === null) {
+        echo "Conexión a la base de datos no establecida.<br>"; // Depuración
+        return;
+    }
 
     $sql = "SELECT nombre FROM parques";
-    $result = $conn->query($sql);
-    $parques = [];
-    if ($result->rowCount() > 0) {
-        while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-            array_push($parques, $row['nombre']);
+    try {
+        echo "Ejecutando consulta SQL<br>"; // Depuración
+        $result = $conn->query($sql);
+        if ($result === false) {
+            echo "Error en la consulta: " . implode(", ", $conn->errorInfo()) . "<br>";
+        } else {
+            echo "Consulta ejecutada correctamente<br>"; // Depuración
+            $parques = [];
+            if ($result->rowCount() > 0) {
+                echo "Se encontraron " . $result->rowCount() . " parques<br>"; // Depuración
+                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                    array_push($parques, $row['nombre']);
+                }
+                $_SESSION['parquesAllNames'] = $parques;
+                echo "Parques guardados en la sesión.<br>"; // Depuración
+            } else {
+                echo "No se encontraron parques.<br>";
+            }
         }
-        $_SESSION['parquesAllNames'] = $parques;
+    } catch (PDOException $e) {
+        echo "Error en la consulta: " . $e->getMessage() . "<br>";
     }
+  	$conn = null;
 }
+
+
+
 function mostVisited()
 {
     require_once("bbddconnect.php");
@@ -54,6 +81,7 @@ function mostVisited()
         }
         $_SESSION['mostVisited'] = $mostVisited;
     }
+  	$conn = null;
 }
 
 function getInfoArbol($id)
@@ -63,7 +91,7 @@ function getInfoArbol($id)
     try {
         $sql_arbol = "
         SELECT a.`nombre`, a.`nombre_cientifico`, a.`familia`, a.`clase`, a.`imagen`
-        FROM `arboles` AS a
+        FROM `arboles` a
         WHERE a.`id_arbol` = :id;
         ";
 
@@ -80,7 +108,7 @@ function getInfoArbol($id)
 
             $sql_parques_ids = "
             SELECT r.`relaciones`
-            FROM `relacion` AS r
+            FROM `relacion` r
             WHERE r.`id_relacion` = :id;
             ";
 
@@ -98,8 +126,8 @@ function getInfoArbol($id)
                 foreach ($parques_ids_relacion as $id_relacion) {
                     $sql_parque = "
                     SELECT p.`id_parque`, p.`nombre`
-                    FROM `parques` AS p
-                    JOIN `relacion` AS r ON FIND_IN_SET(p.`id_parque`, r.`relaciones`) > 0
+                    FROM `parques` p
+                    JOIN `relacion` r ON FIND_IN_SET(p.`id_parque`, r.`relaciones`) > 0
                     WHERE r.`id_relacion` = :id_relacion
                     ";
 
@@ -118,6 +146,26 @@ function getInfoArbol($id)
             }
 
             $info_arbol['parques_relacionados'] = $parques_relacionados;
+          
+          $info_arbol['parques_relacionados'] = $parques_relacionados;
+
+            $sql_contenido = "
+                SELECT id_contenido, numero, titulo, titulo_en, texto, texto_en
+                FROM contenido
+                WHERE tipo = 'arbol' AND id_referencia = :id
+                ORDER BY numero ASC;";
+
+            $stmt = $conn->prepare($sql_contenido);
+
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+            $stmt->execute();
+
+            $contenido = array();
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $contenido[] = $row;
+            }
+            $info_arbol['contenido'] = $contenido;
         } else {
             return array();
         }
@@ -127,25 +175,46 @@ function getInfoArbol($id)
     } catch (PDOException $e) {
         echo "Error de conexión: " . $e->getMessage();
     }
+ 	$conn = null;
 }
 
-function incrementarVisitasArbol($arbol_id)
-{
-    require_once("bbddconnect.php");
+
+function incrementarVisitasArbol($arbol_id) {
+    require_once("bbddconnect.php"); // Incluir bbddconnect.php dentro de la función
 
     try {
+        // Iniciar una transacción
+        $conn->beginTransaction();
+        
+        // Obtener las visitas actuales
+        $stmt = $conn->prepare("SELECT visitas FROM arboles WHERE id_arbol = :arbol_id");
+        $stmt->bindParam(':arbol_id', $arbol_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $visitas = $stmt->fetchColumn();
 
-        $stmt = $conn->prepare("CALL incrementarVisitasArbol(?)");
+        // Incrementar el contador de visitas
+        $visitas++;
 
-        $stmt->bindParam(1, $arbol_id, PDO::PARAM_INT);
-
+        // Actualizar el campo visitas en la tabla de arboles
+        $stmt = $conn->prepare("UPDATE arboles SET visitas = :visitas WHERE id_arbol = :arbol_id");
+        $stmt->bindParam(':visitas', $visitas, PDO::PARAM_INT);
+        $stmt->bindParam(':arbol_id', $arbol_id, PDO::PARAM_INT);
         $stmt->execute();
 
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo "Error de conexión: " . $e->getMessage();
+        // Confirmar la transacción
+        $conn->commit();
+
+        // Devolver el nuevo número de visitas
+        return $visitas;
+    } catch (Exception $e) {
+        // Revertir la transacción en caso de error
+        $conn->rollBack();
+        echo "Failed: " . $e->getMessage();
     }
+  $conn = null;
 }
+
+
 
 function getInfoParque($id)
 {
@@ -154,7 +223,7 @@ function getInfoParque($id)
     try {
         $sql_parque = "
 	SELECT p.`nombre`,p.`direccion`,p.`transporte_bus`,p.`transporte_metro`,p.`transporte_renfe`,p.`latitud`,p.`longitud`,p.`imagen` 
-	FROM p.`parques` AS p 
+	FROM p.`parques` p 
 	WHERE p.`id_parque` = :id;        
         ";
 
@@ -171,7 +240,7 @@ function getInfoParque($id)
 
             $sql_arboles_ids = "
             SELECT r.`relaciones`
-            FROM `relacion` AS r
+            FROM `relacion` r
             WHERE r.`id_relacion` = :id;
             ";
 
@@ -190,7 +259,7 @@ function getInfoParque($id)
                     $sql_arbol = "
                     SELECT a.`id_arbol`, a.`nombre`
                     FROM `arboles` AS a
-                    JOIN `relacion` AS r ON FIND_IN_SET(p.`id_arbol`, r.`relaciones`) > 0
+                    JOIN `relacion` r ON FIND_IN_SET(p.`id_arbol`, r.`relaciones`) > 0
                     WHERE r.`id_relacion` = :id_relacion
                     ";
 
@@ -218,22 +287,40 @@ function getInfoParque($id)
     } catch (PDOException $e) {
         echo "Error de conexión: " . $e->getMessage();
     }
+  $conn = null;
 }
 
-function incrementarVisitasParque($parque_id)
-{
-    require_once("bbddconnect.php");
+function incrementarVisitasParque($parque_id) {
+    require_once("bbddconnect.php"); // Incluir bbddconnect.php dentro de la función
 
     try {
+        // Iniciar una transacción
+        $conn->beginTransaction();
+        
+        // Obtener las visitas actuales
+        $stmt = $conn->prepare("SELECT visitas FROM parques WHERE id_parque = :parque_id");
+        $stmt->bindParam(':parque_id', $parque_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $visitas = $stmt->fetchColumn();
 
-        $stmt = $conn->prepare("CALL incrementarVisitasParque(?)");
+        // Incrementar el contador de visitas
+        $visitas++;
 
-        $stmt->bindParam(1, $parque_id, PDO::PARAM_INT);
-
+        // Actualizar el campo visitas en la tabla parques
+        $stmt = $conn->prepare("UPDATE parques SET visitas = :visitas WHERE id_parque = :parque_id");
+        $stmt->bindParam(':visitas', $visitas, PDO::PARAM_INT);
+        $stmt->bindParam(':parque_id', $parque_id, PDO::PARAM_INT);
         $stmt->execute();
 
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo "Error de conexión: " . $e->getMessage();
+        // Confirmar la transacción
+        $conn->commit();
+
+        // Devolver el nuevo número de visitas
+        return $visitas;
+    } catch (Exception $e) {
+        // Revertir la transacción en caso de error
+        $conn->rollBack();
+        echo "Failed: " . $e->getMessage();
     }
+  $conn = null;
 }
