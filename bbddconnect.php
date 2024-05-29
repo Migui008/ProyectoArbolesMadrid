@@ -1,13 +1,17 @@
 <?php
-$servername = "localhost";
-$username = "tu_usuario";
-$password = "tu_contraseña";
-$dbname = "nombre_de_tu_base_de_datos";
+$servername = "db5015852102.hosting-data.io";
+$username = "dbu2608582";
+$password = "JG86AkWs_Ytg@ZG";
+$dbname = "dbs12922058";
+$conn = null;
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "Conexión exitosa";
+    
+    // Aquí se realizan las consultas y otras operaciones con la base de datos
+
+    // No es necesario llamar a close() en PDO, simplemente dejamos que el objeto $conn se elimine cuando ya no se necesite.
 } catch(PDOException $e) {
     echo "Error de conexión: " . $e->getMessage();
 }
