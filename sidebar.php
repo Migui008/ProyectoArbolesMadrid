@@ -11,11 +11,8 @@ require_once("functions.php");
     $mostVisited = $_SESSION['mostVisited'];
 
     foreach ($mostVisited as $page) {
-        echo "<a href='/$page'>$page</a>";
+        echo "<a class='sidebarPage' href='/$page'>$page</a><br>";
     }
     ?>
-  </div>
-  <div class="coment">
-  
   </div>
 </div>
