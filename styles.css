@@ -1,6 +1,7 @@
-*{
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -8,6 +9,7 @@ body {
     height: 100%;
     background: linear-gradient(to right, #005245, #85FFED);
     color: #EBFFFC;
+    font-family: Arial, sans-serif;
 }
 
 .menubar {
@@ -15,8 +17,6 @@ body {
     justify-content: space-between;
     align-items: center;
     background-color: #FDFFE2;
-    margin: 0;
-    top: 0;
     height: 50px;
     padding: 0 20px;
 }
@@ -34,10 +34,9 @@ body {
     margin-left: 20px;
     display: flex;
     align-items: center;
-    justify-content: center; 
+    justify-content: center;
     width: 80%;
     height: 100%;
-    margin: 0;
 }
 
 .sectionfilter .arboles,
@@ -70,11 +69,10 @@ body {
 
 .sidebar {
     background: linear-gradient(to right, #E6FF94, #ACE1AF);
-    left: 0;
     width: 12%;
     height: 100vh;
     text-align: center;
-    float: left;
+    position: fixed;
 }
 
 .mostvisited {
@@ -97,12 +95,15 @@ body {
 .container {
     display: flex;
     flex-grow: 1;
+    margin-left: 12%;
     height: 100%;
+    padding: 20px;
 }
 
 .mainContent {
     flex-grow: 1;
     padding: 20px;
+    width: 100%;
 }
 
 .mainArticleInfo {
@@ -114,62 +115,40 @@ body {
     width: 28%;
     float: right;
 }
-.sideContent p{
-    color: #001F1A;
-}
-.sideContent h4{
+
+.sideContent p {
     color: #001F1A;
 }
 
-.imagenParque, .imagenArbol{
+.sideContent h4 {
+    color: #001F1A;
+}
+
+.imagenParque, .imagenArbol {
     margin-top: 100px;
-  	width: 90%;
+    width: 90%;
 }
 
-.enlaceParque{
-    display: block;
-    text-decoration: none;
-    margin-bottom: 10px;
-    color: #333;
-}
-.enlaceArbol{
+.enlaceParque, .enlaceArbol {
     display: block;
     text-decoration: none;
     margin-bottom: 10px;
     color: #333;
 }
 
-.enlaceParque:link,
-.enlaceParque:visited {
+.enlaceParque:link, .enlaceParque:visited,
+.enlaceArbol:link, .enlaceArbol:visited {
     color: #0FF;
 }
 
-.enlaceParque:hover,
-.enlaceParque:active {
-    color: #005245;
-}
-
-.enlaceArbol:link,
-.enlaceArbol:visited {
-    color: #0FF;
-}
-
-.enlaceArbol:hover,
-.enlaceArbol:active {
+.enlaceParque:hover, .enlaceParque:active,
+.enlaceArbol:hover, .enlaceArbol:active {
     color: #005245;
 }
 
 #map {
     height: 512px;
-    width: 512px;
-}
-
-.mainContent {
-    margin-left: 70px;
-}
-
-.mainArticleInfo {
-    margin-left: 7%;
+    width: 100%;
 }
 
 .langForm {
@@ -177,79 +156,200 @@ body {
     display: inline-block;
 }
 
-.enlaceRelaciones{
+.enlaceRelaciones {
     display: block;
     text-decoration: none;
     margin-bottom: 10px;
     color: #333;
 }
 
-.enlaceRelaciones:link,
-.enlaceRelaciones:visited {
+.enlaceRelaciones:link, .enlaceRelaciones:visited {
     color: #567;
 }
 
-.enlaceRelaciones:hover,
-.enlaceRelaciones:active {
+.enlaceRelaciones:hover, .enlaceRelaciones:active {
     color: #4258FF;
 }
 
-button{
+button {
     border-radius: 0.7em;
     transform: translateY(-0.2em);
     transition: transform 0.3s ease;
 }
 
-button:hover{
+
+button:hover {
     transform: translateY(0.33em);
 }
 
-button:active{
+button:active {
     transform: translateY(0);
 }
 
-.indexBody{
-	width: 88%;
+.indexBody {
+    width: 88%;
     float: right;
     height: 100%;
 }
 
-.selectTitle{
-    padding-left: 40px
+.selectTitle {
+    padding-left: 40px;
 }
 
-.sidebarPage{
+.sidebarPage {
     padding-top: 15px;
 }
-.banner{
+
+.banner {
     width: 100%;
 }
 
-.indexContent{
+.indexContent {
     padding: 20px;
     height: 100%;
 }
 
-.enlacesReferencias:link,
-.enlacesReferencias:visited {
+.enlacesReferencias:link, .enlacesReferencias:visited {
     color: purple;
     text-decoration: none;
 }
 
-.enlacesReferencias:hover,
-.enlacesReferencias:active {
+.enlacesReferencias:hover, .enlacesReferencias:active {
     color: #4258FF;
-    text-decoration: none;
 }
 
-.indexContentImages a:link,
-.indexContentImages a:visited {
+.indexContentImages a:link, .indexContentImages a:visited {
     color: purple;
     text-decoration: none;
 }
 
-.indexContentImages a:hover,
-.indexContentImages a:active {
+.indexContentImages a:hover, .indexContentImages a:active {
     color: #4258FF;
-    text-decoration: none;
+}
+@media (max-width: 1920px){
+    .langForm{
+        padding-right: 10px;
+    }
+}
+@media (max-width: 1440px){
+    .langForm{
+        padding-right: 60px; 
+
+    }
+}
+
+@media (max-width: 1440px){
+    .langForm{
+        padding-right: 47px; 
+
+    }
+}
+
+@media (max-width: 1200px) {
+    .sectionfilter .arboles, .sectionfilter .parques {
+        margin: 0 20px;
+    }
+
+    .navbutton {
+        width: 40%;
+    }
+    .langForm{
+        padding-right: 47px;
+
+    }
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        width: 20%;
+    }
+
+    .container {
+        margin-left: 20%;
+    }
+
+    .mainArticleInfo {
+        width: 70%;
+    }
+
+    .sideContent {
+        width: 28%;
+    }
+
+    #map {
+        height: 400px;
+    }
+
+}
+
+@media (max-width: 768px) {
+    .menubar {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+    }
+
+    .navbutton {
+        width: 100%;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .container {
+        flex-direction: column;
+        margin-left: 0;
+    }
+
+    .mainArticleInfo, .sideContent {
+        width: 100%;
+        float: none;
+        margin-left: 0;
+    }
+
+    #map {
+        height: 300px;
+    }
+    .enlaceRelaciones:link, .enlaceRelaciones:visited {
+        color: #FFF;
+    }
+
+    .enlaceRelaciones:hover, .enlaceRelaciones:active {
+        color: #FFF;
+    }
+}
+
+@media (max-width: 576px) {
+    .sectionfilter {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .sectionfilter .arboles, .sectionfilter .parques {
+        margin: 10px 0;
+    }
+
+    .navbutton {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .indexBody {
+        width: 100%;
+        float: none;
+    }
+
+    .mostvisited a {
+        padding: 10px;
+    }
+    .enlaceRelaciones:link, .enlaceRelaciones:visited {
+        color: #FFF;
+    }
+
+    .enlaceRelaciones:hover, .enlaceRelaciones:active {
+        color: #FFF;
+    }
 }
