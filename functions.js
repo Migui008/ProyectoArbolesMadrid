@@ -1,18 +1,6 @@
 var enlaceArboles = document.getElementById('enlaceArboles');
 var enlaceParques = document.getElementById('enlaceParques');
 
-document.addEventListener("DOMContentLoaded", function() {
-    const loginButton = document.getElementById('loginbutton');
-    const createAccount = document.getElementById('createaccount');
-
-    loginButton.addEventListener("click", function() {
-        window.location.href = "/login.php";
-    });
-
-    createAccount.addEventListener("click", function() {
-        window.location.href = "/createAccount.php";
-    });
-});
 
 
 function initMap() {
