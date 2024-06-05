@@ -8,8 +8,8 @@
     <?php
     session_start();
     require_once("functions.php");
-    $idParque = 1;
-    $nombreParque = "Jardines del Buen Retiro";
+    $idParque = 4;
+    $nombreParque = "Cuña Verde de O Donnell y Fuente Carrantona";
     if (!isset($_SESSION[$nombreParque])) {
         getInfoParque($idParque);
     }
@@ -107,7 +107,6 @@
         ?>
     </div>
   </div>
-
     <script>
     var latitud = parseFloat(<?= json_encode($infoParque["latitud"]) ?>);
     var longitud = parseFloat(<?= json_encode($infoParque["longitud"]) ?>);
@@ -117,6 +116,5 @@
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCLGJGJeXOzxATwdcn6gF7JYj2aseHiYT4&callback=initMap">
     </script>
-
 </body>
 </html>

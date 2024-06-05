@@ -1,85 +1,255 @@
-html{
-    height: 100%;
+*{
+    margin: 0;
+    padding: 0;
 }
 
-body{
+body {
     margin: 0;
     height: 100%;
+    background: linear-gradient(to right, #005245, #85FFED);
+    color: #EBFFFC;
 }
 
 .menubar {
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    background-color: #da6a6a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #FDFFE2;
     margin: 0;
     top: 0;
-    height: 50px; 
-    padding: 0 20px; 
+    height: 50px;
+    padding: 0 20px;
 }
 
-.sectionicon{
+.sectionicon {
     height: 90%;
 }
 
 .sectionicon img {
-    height: 100%; 
+    height: 100%;
     margin: 0;
 }
 
 .sectionfilter {
-    margin: 0;
-    display: flex; 
+    margin-left: 20px;
+    display: flex;
     align-items: center;
+    justify-content: center; 
+    width: 80%;
+    height: 100%;
+    margin: 0;
 }
 
 .sectionfilter .arboles,
 .sectionfilter .parques {
-    margin: 0px; 
-    padding-left: 200px;
-  	padding-right: 200px;
+    margin: 0 50px; 
 }
 
-.sectionlogin {
+.navbutton {
+    height: 90%;
+    margin: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30%;
+    border-radius: 1em;
+    background-color: #5A72A0;
+    cursor: pointer;
+}
+
+.navbutton p {
+    color: #000;
+    text-align: center;
     margin: 0;
 }
-.sectionfilter{
-    height: 100%;
-}
-.navbutton{
-    height: 100%;
-}
-.navbutton :hover{
-    background-color: aqua;
+
+.sectionfilter .arboles:hover,
+.sectionfilter .parques:hover {
+    background-color: #83B4FF;
 }
 
-.sidebar{
-    background-color: green;
+.sidebar {
+    background: linear-gradient(to right, #E6FF94, #ACE1AF);
     left: 0;
     width: 12%;
-    height: 100%;
+    height: 100vh;
     text-align: center;
+    float: left;
 }
-.mostvisited{
-	text-align: center;
+
+.mostvisited {
+    text-align: center;
+    padding-top: 20px;
+    height: calc(100% - 20px);
+    overflow-y: auto;
 }
 
 .mostvisited a {
-    display: block; 
+    display: block;
     text-decoration: none;
     color: black;
 }
 
-.mostvisited a:hover{
+.mostvisited a:hover {
     color: #4863A0;
 }
 
 .container {
     display: flex;
     flex-grow: 1;
-    height: 100%
+    height: 100%;
 }
+
 .mainContent {
     flex-grow: 1;
     padding: 20px;
+}
+
+.mainArticleInfo {
+    width: 60%;
+    float: left;
+}
+
+.sideContent {
+    width: 28%;
+    float: right;
+}
+.sideContent p{
+    color: #001F1A;
+}
+.sideContent h4{
+    color: #001F1A;
+}
+
+.imagenParque, .imagenArbol{
+    margin-top: 100px;
+  	width: 90%;
+}
+
+.enlaceParque{
+    display: block;
+    text-decoration: none;
+    margin-bottom: 10px;
+    color: #333;
+}
+.enlaceArbol{
+    display: block;
+    text-decoration: none;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.enlaceParque:link,
+.enlaceParque:visited {
+    color: #0FF;
+}
+
+.enlaceParque:hover,
+.enlaceParque:active {
+    color: #005245;
+}
+
+.enlaceArbol:link,
+.enlaceArbol:visited {
+    color: #0FF;
+}
+
+.enlaceArbol:hover,
+.enlaceArbol:active {
+    color: #005245;
+}
+
+#map {
+    height: 512px;
+    width: 512px;
+}
+
+.mainContent {
+    margin-left: 70px;
+}
+
+.mainArticleInfo {
+    margin-left: 7%;
+}
+
+.langForm {
+    width: 5%;
+    display: inline-block;
+}
+
+.enlaceRelaciones{
+    display: block;
+    text-decoration: none;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.enlaceRelaciones:link,
+.enlaceRelaciones:visited {
+    color: #567;
+}
+
+.enlaceRelaciones:hover,
+.enlaceRelaciones:active {
+    color: #4258FF;
+}
+
+button{
+    border-radius: 0.7em;
+    transform: translateY(-0.2em);
+    transition: transform 0.3s ease;
+}
+
+button:hover{
+    transform: translateY(0.33em);
+}
+
+button:active{
+    transform: translateY(0);
+}
+
+.indexBody{
+	width: 88%;
+    float: right;
+    height: 100%;
+}
+
+.selectTitle{
+    padding-left: 40px
+}
+
+.sidebarPage{
+    padding-top: 15px;
+}
+.banner{
+    width: 100%;
+}
+
+.indexContent{
+    padding: 20px;
+    height: 100%;
+}
+
+.enlacesReferencias:link,
+.enlacesReferencias:visited {
+    color: purple;
+    text-decoration: none;
+}
+
+.enlacesReferencias:hover,
+.enlacesReferencias:active {
+    color: #4258FF;
+    text-decoration: none;
+}
+
+.indexContentImages a:link,
+.indexContentImages a:visited {
+    color: purple;
+    text-decoration: none;
+}
+
+.indexContentImages a:hover,
+.indexContentImages a:active {
+    color: #4258FF;
+    text-decoration: none;
 }

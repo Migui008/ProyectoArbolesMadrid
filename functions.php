@@ -1,62 +1,56 @@
 <?php
-function getAllArboles()
-{
-    require_once("bbddconnect.php");
-
-    $sql = "SELECT nombre FROM arboles;";
-    $result = $conn->query($sql);
-    $arboles = [];
-    if ($result->rowCount() > 0) {
-        while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-            array_push($arboles, $row['nombre']);
-        }
-        $_SESSION['arbolesAllNames'] = $arboles;
-    }
-  	$conn = null;
-}
-
-function getAllParques()
-{
-  	session_start();
-    echo "Incluyendo bbddconnect.php<br>"; // Depuración
+function getAllArboles() {
+    session_start();
     require_once('bbddconnect.php');
+    global $conn; 
 
-    if ($conn === null) {
-        echo "Conexión a la base de datos no establecida.<br>"; // Depuración
-        return;
-    }
-
-    $sql = "SELECT nombre FROM parques";
+    $sql = "SELECT nombre FROM arboles";
     try {
-        echo "Ejecutando consulta SQL<br>"; // Depuración
         $result = $conn->query($sql);
         if ($result === false) {
-            echo "Error en la consulta: " . implode(", ", $conn->errorInfo()) . "<br>";
         } else {
-            echo "Consulta ejecutada correctamente<br>"; // Depuración
-            $parques = [];
+            $arboles = [];
             if ($result->rowCount() > 0) {
-                echo "Se encontraron " . $result->rowCount() . " parques<br>"; // Depuración
                 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                    array_push($parques, $row['nombre']);
+                    array_push($arboles, $row['nombre']);
                 }
-                $_SESSION['parquesAllNames'] = $parques;
-                echo "Parques guardados en la sesión.<br>"; // Depuración
-            } else {
-                echo "No se encontraron parques.<br>";
+                $_SESSION['arbolesAllNames'] = $arboles;
             }
         }
     } catch (PDOException $e) {
         echo "Error en la consulta: " . $e->getMessage() . "<br>";
     }
-  	$conn = null;
+    $conn = null;
 }
 
+function getAllParques() {
+    session_start();
+    require_once('bbddconnect.php');
+    global $conn; 
 
+    $sql = "SELECT nombre FROM parques";
+    try {
+        $result = $conn->query($sql);
+        if ($result === false) {
+        } else {
+            $parques = [];
+            if ($result->rowCount() > 0) {
+                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                    array_push($parques, $row['nombre']);
+                }
+                $_SESSION['parquesAllNames'] = $parques;
+            }
+        }
+    } catch (PDOException $e) {
+        echo "Error en la consulta: " . $e->getMessage() . "<br>";
+    }
+    $conn = null;
+}
 
-function mostVisited()
-{
+function mostVisited() {
     require_once("bbddconnect.php");
+    global $conn; 
+
     $sql = "
     (
         SELECT 'arboles' AS tipo, nombre, visitas
@@ -81,84 +75,54 @@ function mostVisited()
         }
         $_SESSION['mostVisited'] = $mostVisited;
     }
-  	$conn = null;
+    $conn = null;
 }
 
-function getInfoArbol($id)
-{
+function getInfoArbol($id) {
     require_once("bbddconnect.php");
+    global $conn;
 
     try {
         $sql_arbol = "
-        SELECT a.`nombre`, a.`nombre_cientifico`, a.`familia`, a.`clase`, a.`imagen`
+        SELECT a.`nombre`, a.`nombre_cientifico`, a.`familia`, a.`clase`, a.`imagen`, r.`relaciones`
         FROM `arboles` a
+        LEFT JOIN `relacion` r ON a.`id_relacion` = r.`id_relacion`
         WHERE a.`id_arbol` = :id;
         ";
 
         $stmt = $conn->prepare($sql_arbol);
-
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-
         $stmt->execute();
 
         $info_arbol = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($info_arbol) {
-            $parques_relacionados = array();
+            $parques_ids = explode(' ', $info_arbol['relaciones']);
 
-            $sql_parques_ids = "
-            SELECT r.`relaciones`
-            FROM `relacion` r
-            WHERE r.`id_relacion` = :id;
-            ";
+            if (!empty($parques_ids[0])) {
+                $placeholders = implode(',', array_fill(0, count($parques_ids), '?'));
 
-            $stmt = $conn->prepare($sql_parques_ids);
+                $sql2 = "SELECT `nombre` FROM `parques` WHERE `id_relacion` IN ($placeholders)";
+                
+                $stmt2 = $conn->prepare($sql2);
+                $stmt2->execute($parques_ids);
 
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                $parques_relacionados = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
-            $stmt->execute();
-
-            $row_parques_ids = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($row_parques_ids) {
-                $parques_ids_relacion = explode(" ", $row_parques_ids['relaciones']);
-
-                foreach ($parques_ids_relacion as $id_relacion) {
-                    $sql_parque = "
-                    SELECT p.`id_parque`, p.`nombre`
-                    FROM `parques` p
-                    JOIN `relacion` r ON FIND_IN_SET(p.`id_parque`, r.`relaciones`) > 0
-                    WHERE r.`id_relacion` = :id_relacion
-                    ";
-
-                    $stmt = $conn->prepare($sql_parque);
-
-                    $stmt->bindParam(':id_relacion', $id_relacion, PDO::PARAM_INT);
-
-                    $stmt->execute();
-
-                    $parque = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                    if ($parque) {
-                        $parques_relacionados[] = $parque;
-                    }
-                }
+                $info_arbol['parques_relacionados'] = array_column($parques_relacionados, 'nombre');
+            } else {
+                $info_arbol['parques_relacionados'] = [];
             }
-
-            $info_arbol['parques_relacionados'] = $parques_relacionados;
-          
-          $info_arbol['parques_relacionados'] = $parques_relacionados;
 
             $sql_contenido = "
                 SELECT id_contenido, numero, titulo, titulo_en, texto, texto_en
                 FROM contenido
                 WHERE tipo = 'arbol' AND id_referencia = :id
-                ORDER BY numero ASC;";
+                ORDER BY numero ASC;
+            ";
 
             $stmt = $conn->prepare($sql_contenido);
-
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-
             $stmt->execute();
 
             $contenido = array();
@@ -175,109 +139,93 @@ function getInfoArbol($id)
     } catch (PDOException $e) {
         echo "Error de conexión: " . $e->getMessage();
     }
- 	$conn = null;
+    $conn = null;
 }
 
 
 function incrementarVisitasArbol($arbol_id) {
-    require_once("bbddconnect.php"); // Incluir bbddconnect.php dentro de la función
+    require_once("bbddconnect.php");
+    global $conn;
 
     try {
-        // Iniciar una transacción
         $conn->beginTransaction();
-        
-        // Obtener las visitas actuales
+
         $stmt = $conn->prepare("SELECT visitas FROM arboles WHERE id_arbol = :arbol_id");
         $stmt->bindParam(':arbol_id', $arbol_id, PDO::PARAM_INT);
         $stmt->execute();
         $visitas = $stmt->fetchColumn();
 
-        // Incrementar el contador de visitas
         $visitas++;
 
-        // Actualizar el campo visitas en la tabla de arboles
         $stmt = $conn->prepare("UPDATE arboles SET visitas = :visitas WHERE id_arbol = :arbol_id");
         $stmt->bindParam(':visitas', $visitas, PDO::PARAM_INT);
         $stmt->bindParam(':arbol_id', $arbol_id, PDO::PARAM_INT);
         $stmt->execute();
 
-        // Confirmar la transacción
         $conn->commit();
-
-        // Devolver el nuevo número de visitas
         return $visitas;
     } catch (Exception $e) {
-        // Revertir la transacción en caso de error
         $conn->rollBack();
         echo "Failed: " . $e->getMessage();
     }
-  $conn = null;
+    $conn = null;
 }
 
-
-
-function getInfoParque($id)
-{
+function getInfoParque($id) {
     require_once("bbddconnect.php");
+    global $conn; 
 
     try {
-        $sql_parque = "
-	SELECT p.`nombre`,p.`direccion`,p.`transporte_bus`,p.`transporte_metro`,p.`transporte_renfe`,p.`latitud`,p.`longitud`,p.`imagen` 
-	FROM p.`parques` p 
-	WHERE p.`id_parque` = :id;        
+        $sql = "
+            SELECT p.`nombre`, p.`direccion`, p.`transporte_bus`, p.`transporte_metro`, p.`transporte_renfe`, 
+                   p.`latitud`, p.`longitud`, p.`imagen`, r.`relaciones`
+            FROM `parques` p
+            LEFT JOIN `relacion` r ON p.`id_relacion` = r.`id_relacion`
+            WHERE p.`id_parque` = :id;
         ";
 
-        $stmt = $conn->prepare($sql_parque);
-
+        $stmt = $conn->prepare($sql);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-
         $stmt->execute();
 
         $info_parque = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        
         if ($info_parque) {
-            $parques_relacionados = array();
+            $arboles_ids = explode(' ', $info_parque['relaciones']);
+            
 
-            $sql_arboles_ids = "
-            SELECT r.`relaciones`
-            FROM `relacion` r
-            WHERE r.`id_relacion` = :id;
-            ";
+            if (!empty($arboles_ids)) {
 
-            $stmt = $conn->prepare($sql_arboles_ids);
+                $placeholders = implode(',', array_fill(0, count($arboles_ids), '?'));
 
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                $sql2 = "SELECT `nombre` FROM `arboles` WHERE `id_relacion` IN ($placeholders)";
+                
+                $stmt2 = $conn->prepare($sql2);
+                $stmt2->execute($arboles_ids);
 
-            $stmt->execute();
+                $arboles_relacionados = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
-            $row_arboles_ids = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($row_arboles_ids) {
-                $arboles_ids_relacion = explode(" ", $row_arboles_ids['relaciones']);
-
-                foreach ($arboles_ids_relacion as $id_relacion) {
-                    $sql_arbol = "
-                    SELECT a.`id_arbol`, a.`nombre`
-                    FROM `arboles` AS a
-                    JOIN `relacion` r ON FIND_IN_SET(p.`id_arbol`, r.`relaciones`) > 0
-                    WHERE r.`id_relacion` = :id_relacion
-                    ";
-
-                    $stmt = $conn->prepare($sql_arbol);
-
-                    $stmt->bindParam(':id_relacion', $id_relacion, PDO::PARAM_INT);
-
-                    $stmt->execute();
-
-                    $arbol = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                    if ($arbol) {
-                        $arboles_relacionados[] = $arbol;
-                    }
-                }
+                $info_parque['arboles_relacionados'] = $arboles_relacionados;
+            } else {
+                $info_parque['arboles_relacionados'] = [];
             }
 
-            $info_parque['arboles_relacionados'] = $arboles_relacionados;
+            $sql_contenido = "
+                SELECT id_contenido, numero, titulo, titulo_en, texto, texto_en
+                FROM contenido
+                WHERE tipo = 'parque' AND id_referencia = :id
+                ORDER BY numero ASC;
+            ";
+
+            $stmt = $conn->prepare($sql_contenido);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $contenido = array();
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $contenido[] = $row;
+            }
+            $info_parque['contenido'] = $contenido;
         } else {
             return array();
         }
@@ -287,11 +235,12 @@ function getInfoParque($id)
     } catch (PDOException $e) {
         echo "Error de conexión: " . $e->getMessage();
     }
-  $conn = null;
+    $conn = null;
 }
 
 function incrementarVisitasParque($parque_id) {
-    require_once("bbddconnect.php"); // Incluir bbddconnect.php dentro de la función
+    require_once("bbddconnect.php"); 
+  	global $conn;
 
     try {
         // Iniciar una transacción
@@ -324,3 +273,4 @@ function incrementarVisitasParque($parque_id) {
     }
   $conn = null;
 }
+?>

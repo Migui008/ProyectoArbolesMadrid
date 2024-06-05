@@ -3,6 +3,7 @@ $servername = "db5015852102.hosting-data.io";
 $username = "dbu2608582";
 $password = "JG86AkWs_Ytg@ZG";
 $dbname = "dbs12922058";
+global $conn;
 $conn = null;
 
 try {

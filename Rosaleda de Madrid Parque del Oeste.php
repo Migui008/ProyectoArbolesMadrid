@@ -8,8 +8,8 @@
     <?php
     session_start();
     require_once("functions.php");
-    $idParque = 1;
-    $nombreParque = "Jardines del Buen Retiro";
+    $idParque = 12;
+    $nombreParque = "Rosaleda de Madrid Parque del Oeste";
     if (!isset($_SESSION[$nombreParque])) {
         getInfoParque($idParque);
     }

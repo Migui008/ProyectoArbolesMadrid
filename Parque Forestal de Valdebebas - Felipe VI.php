@@ -8,8 +8,8 @@
     <?php
     session_start();
     require_once("functions.php");
-    $idParque = 1;
-    $nombreParque = "Jardines del Buen Retiro";
+    $idParque = 16;
+    $nombreParque = "Parque Forestal de Valdebebas - Felipe VI";
     if (!isset($_SESSION[$nombreParque])) {
         getInfoParque($idParque);
     }

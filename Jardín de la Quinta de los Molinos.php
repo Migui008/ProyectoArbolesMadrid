@@ -8,8 +8,8 @@
     <?php
     session_start();
     require_once("functions.php");
-    $idParque = 1;
-    $nombreParque = "Jardines del Buen Retiro";
+    $idParque = 10;
+    $nombreParque = "Jardín de la Quinta de los Molinos";
     if (!isset($_SESSION[$nombreParque])) {
         getInfoParque($idParque);
     }
