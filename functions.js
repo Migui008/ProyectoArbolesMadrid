@@ -4,7 +4,6 @@ var enlaceParques = document.getElementById('enlaceParques');
 
 
 function initMap() {
-    // Asegúrate de que las variables latitud y longitud estén disponibles globalmente
     if (typeof latitud !== 'undefined' && typeof longitud !== 'undefined') {
         var parqueLocation = { lat: latitud, lng: longitud };
 
