@@ -82,8 +82,7 @@
             echo "<h4>Available trees</h4>";
         }
         foreach ($infoParque['arboles_relacionados'] as $arbol) {
-            $arbol = $arbolN["nombre"];
-			$arbolN = $arbol["nombre"];
+            $arbolN = $arbol["nombre"];
 			echo "<a class='enlaceRelaciones' href='/$arbolN'>$arbolN</a><br>";
         }
       	if (!isset($_POST['lang']) || $_POST['lang'] == 'es') {
@@ -107,6 +106,7 @@
         	}
         ?>
     </div>
+  </div>
 
     <script>
     var latitud = parseFloat(<?= json_encode($infoParque["latitud"]) ?>);
@@ -117,6 +117,6 @@
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCLGJGJeXOzxATwdcn6gF7JYj2aseHiYT4&callback=initMap">
     </script>
-  </div>
+
 </body>
 </html>
