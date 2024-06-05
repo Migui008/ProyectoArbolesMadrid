@@ -75,6 +75,10 @@ body {
     position: fixed;
 }
 
+.mainArticleInfo{
+    padding-left: 10px
+}
+
 .mostvisited {
     text-align: center;
     padding-top: 20px;
