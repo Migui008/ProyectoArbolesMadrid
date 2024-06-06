@@ -70,9 +70,9 @@ body {
 .sidebar {
     background: linear-gradient(to right, #E6FF94, #ACE1AF);
     width: 12%;
-    height: 100vh;
+    height: 100%;
     text-align: center;
-    position: fixed;
+    position: absolute;
 }
 
 .mainArticleInfo{
@@ -265,7 +265,7 @@ button:active {
 
 @media (max-width: 992px) {
     .sidebar {
-        width: 20%;
+        width: 12%;
     }
 
     .container {
